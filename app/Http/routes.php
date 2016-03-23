@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -26,6 +22,26 @@ Route::get('/', function () {
 |
 */
 
-Route::group(['middleware' => ['web']], function () {
-    //
+Route::controllers([
+    'auth' => 'Auth\AuthController',
+    'password' => 'Auth\PasswordController'
+]);
+
+Route::resource('about','AboutController');
+Route::resource('home', 'HomeController');
+Route::resource('calendar','CalendarController');
+Route::resource('contact','ContactController');
+Route::resource('role','RoleController');
+Route::resource('permission','PermissionController');
+Route::resource('user','UserController');
+
+
+
+Route::group(['middleware' => 'web'], function () {
+    Route::auth();
+    Route::get('/', 'HomeController@index');
+    Route::resource('member','MemberController');
+    Route::resource('home', 'HomeController');
+    
 });
+
