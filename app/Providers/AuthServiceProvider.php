@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Schema;
+use Kodeine\Acl\Models\Eloquent\Role;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+//        'App\Model' => 'App\Policies\ModelPolicy',
     ];
 
     /**
@@ -26,6 +28,35 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies($gate);
 
+        $roles = $this->getRoles();
+
+        foreach ($roles as $key => $role) {
+
+            $gate->define($role['name'], function ($user) use ($role) {
+
+                $userRoles = $user->getRoles()->toArray();
+
+                foreach ($userRoles as $key => $userRole) {
+                    if ($role['name'] == $userRole) {
+                        return true;
+                    }
+                }
+            });
+        }
+
         //
     }
+
+    protected function getRoles()
+    {
+        if (Schema::hasTable('roles')) {
+
+            $roles = Role::all('*');
+
+            return $roles;
+        }
+
+        return [];
+    }
+
 }

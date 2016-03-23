@@ -2,15 +2,14 @@
 
 namespace App;
 
+use Kodeine\Acl\Traits\HasRole;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 
 class User extends Authenticatable
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    use CanResetPassword, HasRole;
+
     protected $fillable = [
         'name', 'email', 'password',
     ];
